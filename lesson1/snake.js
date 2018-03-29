@@ -24,6 +24,9 @@ $(document).ready(function(){
 		alive: false
 	}
 
+	var score = 0;
+	
+
 	//store snake body parts coordinates
 	var snakeBody = [ [7,7] ]
 
@@ -72,7 +75,19 @@ $(document).ready(function(){
 			candy.alive = true;
 
 		}
-if (player.x < 0 || player.x >= gridNum || player.y < 0 ||player.y >= gridNum){
+
+		
+
+		//eat candy
+		if (player.x == candy.x && player.y == candy.y){
+			candy.alive = false;
+			score += 1
+			$("h1").html("Score: " + score);
+			player.tail += 1;
+
+		}
+
+		if (player.x < 0 || player.x >= gridNum || player.y < 0 ||player.y >= gridNum){
 				player.alive = false;
 				clearInterval(updates);
 			}
@@ -86,7 +101,8 @@ if (player.x < 0 || player.x >= gridNum || player.y < 0 ||player.y >= gridNum){
 				}
 
 			}
-			snakeBody.insert(0, [player.x/player.y]);
+
+			snakeBody.insert(0, [player.x,player.y]);
 			if (snakeBody.length> player.tail+1){
 				snakeBody.pop();
 			}
@@ -94,11 +110,12 @@ if (player.x < 0 || player.x >= gridNum || player.y < 0 ||player.y >= gridNum){
 			switch(player.direction){
 				case 0:
 				player.x += 1;
+				break;
 				case 1 :
 				player.x -=1;
 				break;
 				case 2:
-				player.y +=1;
+				player.y -=1;
 				break;
 				case 3:
 				player.y +=1;
@@ -112,22 +129,22 @@ if (player.x < 0 || player.x >= gridNum || player.y < 0 ||player.y >= gridNum){
 	function draw(){
 		context.clearRect(0,0, canvas.width,canvas.height);
 		context.fillStyle = "yellow";
-		context.fillRect(candy.x = gridSize,candy.y * gridSize,gridSize,gridSize);
+		context.fillRect(candy.x * gridSize,candy.y * gridSize,gridSize,gridSize);
 
 		//Draw the snake
+		context.fillStyle = "blue";
+		context.fillRect(snakeBody[0][0]* gridSize,snakeBody[0][1] * gridSize,gridSize,gridSize);
 
-
-		for (var i = 0; < player.tail; i++){
+		for (var i = 1; i < player.tail; i++){
 			context.fillStyle = "HotPink";
 			context.fillRect(snakeBody[i][0] *gridSize, snakeBody[i][1] * gridSize,gridSize,gridSize);
-
 		}
 
 	}
 	update();
-	var updates = setInterval(update,100);
+	var updates = setInterval(update,150);
 
-	$(window).on("keydown"function(event){
+	$(window).on("keydown",function(event){
 		keyPressed = event.which;
 	});
 
